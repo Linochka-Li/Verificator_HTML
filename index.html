@@ -203,9 +203,12 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — ИДЕАЛЬНАЯ ВЕРСИЯ
+    //  ВЕБОРАМА — С ИСПРАВЛЕНИЕМ КАВЫЧЕК
     // =============================================
     function transformWeborama(code) {
+        // 0. Убираем ЛИШНИЕ кавычки: "" → "
+        code = code.replace(/""/g, '"');
+
         // 1. Меняем clicktrackers
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
