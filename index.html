@@ -204,7 +204,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — НОВАЯ ВЕРСИЯ, СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
+    //  ВЕБОРАМА — СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
     // =============================================
     function transformWeborama(code) {
         // Разбиваем код на строки, чтобы сохранить форматирование
@@ -269,6 +269,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
+        // НИЧЕГО НЕ УБИРАЕМ! Просто выводим результат
         output.textContent = code;
     }
 
