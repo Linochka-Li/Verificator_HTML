@@ -26,6 +26,9 @@
         .footer { margin-top: 24px; color: #7c6a9e; font-size: 14px; border-top: 1px solid #e8e0f5; padding-top: 20px; text-align: center; }
         .macro-list { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
         .macro-tag { background: #ddd6fe; color: #4a1a8a; padding: 4px 14px; border-radius: 20px; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500; }
+        .preset-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+        .preset-btn { background: #ede9fe; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #4a1a8a; cursor: pointer; transition: 0.2s; }
+        .preset-btn:hover { background: #ddd6fe; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -40,10 +43,14 @@
                 <option value="adriver">Адривер</option>
                 <option value="weborama">Веборама</option>
             </select>
-
+            <label>📋 Быстрая вставка</label>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="loadPreset('adserving')">Адсервинг</button>
+                <button class="preset-btn" onclick="loadPreset('adriver')">Адривер</button>
+                <button class="preset-btn" onclick="loadPreset('weborama')">Веборама</button>
+            </div>
             <label for="inputCode">📄 Исходный код</label>
             <textarea id="inputCode" placeholder="Вставь код..."></textarea>
-
             <button class="btn" onclick="transform()">⚡ Преобразовать</button>
         </div>
         <div class="col">
@@ -55,6 +62,54 @@
     <div class="footer">🔧 Вставь код → выбери верификатора → получи результат</div>
 </div>
 <script>
+    const PRESETS = {
+        adserving: `<script src="https://bs.serving-sys.ru/Serving/adServer.bs?c=28&cn=display&pli=1090409665&w=160&h=600&ord=[timestamp]&z=10000&pcp=$$[[APP_ID]]$$&LineID=$$erid$$"><\/script>
+<noscript>
+<a href="!!https://bs.serving-sys.ru/Serving/adServer.bs?cn=brd&pli=1090409665&Page=&Pos=-1221349322&LineID=$$erid$$&ord=[timestamp]" target="_blank">
+<img src="https://bs.serving-sys.ru/Serving/adServer.bs?c=8&cn=display&pli=1090409665&Page=&Pos=-1221349322&pcp=$$[[APP_ID]]$$&ord=[timestamp]" border=0 width=160 height=600><\/a>
+<\/noscript>`,
+        adriver: `<!-- AdRiver code START -->
+<script>
+window.adrivermraiddata = window.adrivermraiddata || {};
+window.adrivermraiddata.trackers = {};
+(function(SRC) {
+    var script = document.createElement('script');
+    script.setAttribute('type', 'text/javascript');
+    script.src = SRC.split('[[RANDOM]]').join(~~(1E6 * Math.random()));
+    document.querySelector('head').appendChild(script);
+})('https://ad.adriver.ru/cgi-bin/merle.cgi?sid=1&bt=11&tuid=1&ad=111111&pid=0000000&bid=0000000&bn=0000000&exss=&rnd=[[RANDOM]]');
+<\/script>
+<!-- AdRiver code END -->`,
+        weborama: `<script type="text/javascript">
+var adperfobj = {
+account_id : 9633
+,tracking_element_id : 794
+,width : 300
+,height : 250
+,fullhost : 'wcm.weborama-tech.ru'
+,random : '[RANDOM]'
+,burst : 'auto'
+,imptrackers : []
+,clicktrackers : []
+,customparameter : ''
+,publisherclick : '[PUBLISHER_TRACKING_URL]'
+,erid : '[ERID]'
+,er : 1
+};
+document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.weborama-tech.ru/public/js/advertiserv2/ru/adperf_launch_1.0.0_scrambled.js"><\/scr'+'ipt>');
+<\/script>
+<noscript>
+<a href="https://wcm.weborama-tech.ru/fcgi-bin/dispatch.fcgi?a.A=cl&a.si=9633&a.te=794&a.bk=1&g.ism=0&a.ra=[RANDOM]&g.lu=" target="_blank">
+<img src="https://wcm.weborama-tech.ru/fcgi-bin/dispatch.fcgi?a.A=im&a.si=9633&a.te=794&a.he=250&a.wi=300&a.hr=R&a.bk=1&g.ism=0&a.ra=[RANDOM]" width="300" height="250" style="border:0px"/>
+<\/a>
+<\/noscript>`
+    };
+
+    function loadPreset(key) {
+        document.getElementById('inputCode').value = PRESETS[key];
+        transform();
+    }
+
     const INFO = {
         adserving: {
             label: 'Адсервинг',
@@ -84,6 +139,9 @@
         }
     }
 
+    // =============================================
+    //  АДСЕРВИНГ
+    // =============================================
     function transformAdserving(code) {
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
@@ -121,6 +179,9 @@
         return code;
     }
 
+    // =============================================
+    //  АДРИВЕР
+    // =============================================
     function transformAdriver(code) {
         if (!code.includes("'click':['[[CLICK_TRACKING_BEACON]]']")) {
             code = code.replace(
@@ -143,17 +204,20 @@
         return code;
     }
 
+    // =============================================
+    //  ВЕБОРАМА
+    // =============================================
     function transformWeborama(code) {
-        // 1. Убираем лишние кавычки
+        // 0. Убираем ЛИШНИЕ кавычки: "" → "
         code = code.replace(/""/g, '"');
 
-        // 2. Меняем clicktrackers
+        // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
             '$1\'[[CLICK_TRACKING_BEACON]]\''
         );
 
-        // 3. Меняем customparameter
+        // 2. Меняем customparameter : '' → customparameter : '[[EVENT_ID]]'
         code = code.replace(
             /(customparameter\s*:\s*)''/g,
             '$1\'[[EVENT_ID]]\''
@@ -163,7 +227,7 @@
             '$1\'[[EVENT_ID]]\''
         );
 
-        // 4. Меняем erid
+        // 3. Меняем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
         code = code.replace(
             /(erid\s*:\s*)'\[ERID\]'/g,
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
@@ -173,19 +237,19 @@
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
-        // 5. Меняем random
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
         code = code.replace(
             /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
             '$1$2[[RANDOM]]$5'
         );
 
-        // 6. Меняем [RANDOM] в noscript
+        // 5. В noscript заменяем ЛЮБЫЕ скобки вокруг RANDOM
         code = code.replace(
             /(\[*)RANDOM(\]*)/g,
             '[[RANDOM]]'
         );
 
-        // 7. Добавляем CLICK_PREFIX в href
+        // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
         code = code.replace(
             /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
             function(match, hrefPrefix, quote1, url, quote2) {
@@ -194,7 +258,7 @@
             }
         );
 
-        // 8. Страховка для href без кавычек
+        // 7. Страховка: если href без кавычек
         code = code.replace(
             /(href=)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^>\s]*)/g,
             function(match, hrefPrefix, url) {
@@ -203,7 +267,7 @@
             }
         );
 
-        // 9. Финальная страховка для скобок
+        // 8. ФИНАЛЬНАЯ СТРАХОВКА: исправляем ЛЮБЫЕ неправильные скобки
         code = code.replace(/\[{1,3}RANDOM\]{1,3}/g, '[[RANDOM]]');
         code = code.replace(/\[{1,2}CLICK_TRACKING_BEACON\]{1,2}/g, '[[CLICK_TRACKING_BEACON]]');
         code = code.replace(/\[{1,2}EVENT_ID\]{1,2}/g, '[[EVENT_ID]]');
@@ -213,6 +277,9 @@
         return code;
     }
 
+    // =============================================
+    //  ОСНОВНАЯ ФУНКЦИЯ
+    // =============================================
     function transform() {
         const select = document.getElementById('verificator');
         const input = document.getElementById('inputCode');
@@ -221,23 +288,14 @@
         let code = input.value;
         if (!code.trim()) { output.textContent = '⚠️ Вставь исходный код креатива!'; return; }
 
-        // ВОТ ЗДЕСЬ ВЫЗЫВАЕМ НУЖНУЮ ФУНКЦИЮ
         switch(select.value) {
-            case 'adserving':
-                code = transformAdserving(code);
-                break;
-            case 'adriver':
-                code = transformAdriver(code);
-                break;
-            case 'weborama':
-                code = transformWeborama(code);
-                break;
-            default:
-                output.textContent = '❌ Верификатор не найден';
-                return;
+            case 'adserving': code = transformAdserving(code); break;
+            case 'adriver': code = transformAdriver(code); break;
+            case 'weborama': code = transformWeborama(code); break;
+            default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
-        // Финальная очистка
+        // ФИНАЛЬНАЯ ОЧИСТКА: убираем все "" и лишние пробелы
         code = code.replace(/""/g, '"');
         code = code.replace(/\s+/g, ' ').trim();
 
@@ -265,6 +323,7 @@
 
     window.onload = function() {
         updateInfo();
+        loadPreset('adserving');
     };
 </script>
 </body>
