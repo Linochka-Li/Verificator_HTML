@@ -204,19 +204,18 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА
+    //  ВЕБОРАМА — СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
     // =============================================
     function transformWeborama(code) {
-        // 0. Убираем ЛИШНИЕ кавычки: "" → "
+        // Убираем экранные кавычки, НЕ трогаем переносы строк
         code = code.replace(/""/g, '"');
 
-        // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
+        // Меняем макросы, сохраняя всё остальное
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
             '$1\'[[CLICK_TRACKING_BEACON]]\''
         );
 
-        // 2. Меняем customparameter : '' → customparameter : '[[EVENT_ID]]'
         code = code.replace(
             /(customparameter\s*:\s*)''/g,
             '$1\'[[EVENT_ID]]\''
@@ -226,7 +225,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[EVENT_ID]]\''
         );
 
-        // 3. Меняем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
         code = code.replace(
             /(erid\s*:\s*)'\[ERID\]'/g,
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
@@ -236,42 +234,34 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
-        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
         code = code.replace(
-            /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
-            '$1$2[[RANDOM]]$5'
+            /(random\s*:\s*)'\[RANDOM\]'/g,
+            '$1\'[[RANDOM]]\''
+        );
+        code = code.replace(
+            /(random\s*:\s*)"\[RANDOM\]"/g,
+            '$1\'[[RANDOM]]\''
         );
 
-        // 5. В noscript заменяем ЛЮБЫЕ скобки вокруг RANDOM
-        code = code.replace(
-            /(\[*)RANDOM(\]*)/g,
-            '[[RANDOM]]'
-        );
-
-        // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
+        // В noscript
         code = code.replace(
             /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
             function(match, hrefPrefix, quote1, url, quote2) {
                 if (match.includes('[[CLICK_PREFIX]]')) return match;
+                // Добавляем [[CLICK_PREFIX]] и заменяем [RANDOM] на [[RANDOM]]
+                url = url.replace(/\[RANDOM\]/g, '[[RANDOM]]');
                 return hrefPrefix + quote1 + '[[CLICK_PREFIX]]' + url + quote2;
             }
         );
 
-        // 7. Страховка: если href без кавычек
+        // В img src
         code = code.replace(
-            /(href=)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^>\s]*)/g,
-            function(match, hrefPrefix, url) {
-                if (match.includes('[[CLICK_PREFIX]]')) return match;
-                return hrefPrefix + '"[[CLICK_PREFIX]]' + url + '"';
+            /(src\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
+            function(match, srcPrefix, quote1, url, quote2) {
+                url = url.replace(/\[RANDOM\]/g, '[[RANDOM]]');
+                return srcPrefix + quote1 + url + quote2;
             }
         );
-
-        // 8. ФИНАЛЬНАЯ СТРАХОВКА: исправляем ЛЮБЫЕ неправильные скобки
-        code = code.replace(/\[{1,3}RANDOM\]{1,3}/g, '[[RANDOM]]');
-        code = code.replace(/\[{1,2}CLICK_TRACKING_BEACON\]{1,2}/g, '[[CLICK_TRACKING_BEACON]]');
-        code = code.replace(/\[{1,2}EVENT_ID\]{1,2}/g, '[[EVENT_ID]]');
-        code = code.replace(/\[{1,2}CREATIVE_ORD_TOKEN\]{1,2}/g, '[[CREATIVE_ORD_TOKEN]]');
-        code = code.replace(/\[{1,2}CLICK_PREFIX\]{1,2}/g, '[[CLICK_PREFIX]]');
 
         return code;
     }
@@ -294,7 +284,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
-        // Убираем ТОЛЬКО экранные кавычки, НЕ трогаем переносы строк!
+        // ТОЛЬКО убираем экранные кавычки, НЕ ТРОГАЕМ переносы строк!
         code = code.replace(/""/g, '"');
 
         output.textContent = code;
