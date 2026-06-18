@@ -256,7 +256,11 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
-        // Убираем ЛИШНИЕ кавычки в начале и конце (если они есть)
+        // НЕ УБИРАЕМ ПЕРЕНОСЫ СТРОК!
+        // Только убираем экранные кавычки на всякий случай
+        code = code.replace(/""/g, '"');
+
+        // Убираем лишние кавычки в начале и конце
         code = code.replace(/^"|"$/g, '');
 
         output.textContent = code;
