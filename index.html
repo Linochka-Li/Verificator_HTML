@@ -138,15 +138,13 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  АДСЕРВИНГ — ОКОНЧАТЕЛЬНО ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  АДСЕРВИНГ — ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformAdserving(code) {
-        // 1. Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
 
-        // 2. Добавляем ncu=$$[[CLICK_TRACKING_BEACON]]$$& ТОЛЬКО в тег <script>
         code = code.replace(
             /(<script[^>]*src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -155,8 +153,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 3. Добавляем vurl=$$[[APP_ID]]$$ ТОЛЬКО в src (script и img)
-        //    НЕ ДОБАВЛЯЕМ в href!
         code = code.replace(
             /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -165,18 +161,14 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 4. Добавляем [[CLICK_TRACKING_BEACON]] в href
-        //    Находим href="https://... и добавляем BEACON
         code = code.replace(
             /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
             function(match, url) {
-                // Если уже есть [[CLICK_TRACKING_BEACON]] — пропускаем
                 if (match.includes('[[CLICK_TRACKING_BEACON]]')) return match;
                 return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
             }
         );
 
-        // 5. Убираем &vurl=$$[[APP_ID]]$$ из href (если вдруг добавилось)
         code = code.replace(
             /(href="\[\[CLICK_TRACKING_BEACON\]\]https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)&vurl=\$\$\[\[APP_ID\]\]\$\$([^"]*")/g,
             function(match, before, after) {
@@ -184,7 +176,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 6. Страховка: если где-то остался $$erid$$
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
@@ -218,17 +209,50 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА
+    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformWeborama(code) {
-        code = code.replace(/(clicktrackers\s*:\s*)\[\]/g, '$1\'[[CLICK_TRACKING_BEACON]]\'');
-        code = code.replace(/(customparameter\s*:\s*)''/g, '$1\'[[EVENT_ID]]\'');
-        code = code.replace(/(customparameter\s*:\s*)""/g, '$1\'[[EVENT_ID]]\'');
-        code = code.replace(/(erid\s*:\s*)'\[ERID\]'/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
-        code = code.replace(/(erid\s*:\s*)"\[ERID\]"/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
-        code = code.replace(/(random\s*:\s*)'\[RANDOM\]'/g, '$1\'[[RANDOM]]\'');
-        code = code.replace(/(random\s*:\s*)"\[RANDOM\]"/g, '$1\'[[RANDOM]]\'');
+        // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
+        code = code.replace(
+            /(clicktrackers\s*:\s*)\[\]/g,
+            '$1\'[[CLICK_TRACKING_BEACON]]\''
+        );
+
+        // 2. Меняем customparameter : '' → customparameter : '[[EVENT_ID]]'
+        code = code.replace(
+            /(customparameter\s*:\s*)''/g,
+            '$1\'[[EVENT_ID]]\''
+        );
+        code = code.replace(
+            /(customparameter\s*:\s*)""/g,
+            '$1\'[[EVENT_ID]]\''
+        );
+
+        // 3. Меняем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
+        code = code.replace(
+            /(erid\s*:\s*)'\[ERID\]'/g,
+            '$1\'[[CREATIVE_ORD_TOKEN]]\''
+        );
+        code = code.replace(
+            /(erid\s*:\s*)"\[ERID\]"/g,
+            '$1\'[[CREATIVE_ORD_TOKEN]]\''
+        );
+
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
+        //    Ищем только [RANDOM] (одни скобки)
+        code = code.replace(
+            /(random\s*:\s*)'\[RANDOM\]'/g,
+            '$1\'[[RANDOM]]\''
+        );
+        code = code.replace(
+            /(random\s*:\s*)"\[RANDOM\]"/g,
+            '$1\'[[RANDOM]]\''
+        );
+
+        // 5. В noscript заменяем [RANDOM] → [[RANDOM]] (везде, где есть)
         code = code.replace(/\[RANDOM\]/g, '[[RANDOM]]');
+
+        // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
         code = code.replace(
             /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
             function(match, hrefPrefix, quote1, url, quote2) {
@@ -236,6 +260,8 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
                 return hrefPrefix + quote1 + '[[CLICK_PREFIX]]' + url + quote2;
             }
         );
+
+        // 7. Дополнительная страховка: если href без кавычек
         code = code.replace(
             /(href=)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^>\s]*)/g,
             function(match, hrefPrefix, url) {
@@ -243,6 +269,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
                 return hrefPrefix + '"[[CLICK_PREFIX]]' + url + '"';
             }
         );
+
         return code;
     }
 
