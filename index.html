@@ -144,13 +144,16 @@
     }
 
     function transformWeborama(code) {
+        // 1. Убираем лишние кавычки
         code = code.replace(/""/g, '"');
 
+        // 2. Меняем clicktrackers
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
             '$1\'[[CLICK_TRACKING_BEACON]]\''
         );
 
+        // 3. Меняем customparameter
         code = code.replace(
             /(customparameter\s*:\s*)''/g,
             '$1\'[[EVENT_ID]]\''
@@ -160,6 +163,7 @@
             '$1\'[[EVENT_ID]]\''
         );
 
+        // 4. Меняем erid
         code = code.replace(
             /(erid\s*:\s*)'\[ERID\]'/g,
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
@@ -169,16 +173,19 @@
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
+        // 5. Меняем random
         code = code.replace(
             /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
             '$1$2[[RANDOM]]$5'
         );
 
+        // 6. Меняем [RANDOM] в noscript
         code = code.replace(
             /(\[*)RANDOM(\]*)/g,
             '[[RANDOM]]'
         );
 
+        // 7. Добавляем CLICK_PREFIX в href
         code = code.replace(
             /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
             function(match, hrefPrefix, quote1, url, quote2) {
@@ -187,6 +194,7 @@
             }
         );
 
+        // 8. Страховка для href без кавычек
         code = code.replace(
             /(href=)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^>\s]*)/g,
             function(match, hrefPrefix, url) {
@@ -195,6 +203,7 @@
             }
         );
 
+        // 9. Финальная страховка для скобок
         code = code.replace(/\[{1,3}RANDOM\]{1,3}/g, '[[RANDOM]]');
         code = code.replace(/\[{1,2}CLICK_TRACKING_BEACON\]{1,2}/g, '[[CLICK_TRACKING_BEACON]]');
         code = code.replace(/\[{1,2}EVENT_ID\]{1,2}/g, '[[EVENT_ID]]');
@@ -212,14 +221,23 @@
         let code = input.value;
         if (!code.trim()) { output.textContent = '⚠️ Вставь исходный код креатива!'; return; }
 
+        // ВОТ ЗДЕСЬ ВЫЗЫВАЕМ НУЖНУЮ ФУНКЦИЮ
         switch(select.value) {
-            case 'adserving': code = transformAdserving(code); break;
-            case 'adriver': code = transformAdriver(code); break;
-            case 'weborama': code = transformWeborama(code); break;
-            default: output.textContent = '❌ Верификатор не найден'; return;
+            case 'adserving':
+                code = transformAdserving(code);
+                break;
+            case 'adriver':
+                code = transformAdriver(code);
+                break;
+            case 'weborama':
+                code = transformWeborama(code);
+                break;
+            default:
+                output.textContent = '❌ Верификатор не найден';
+                return;
         }
 
-        // ФИНАЛЬНАЯ ОЧИСТКА
+        // Финальная очистка
         code = code.replace(/""/g, '"');
         code = code.replace(/\s+/g, ' ').trim();
 
