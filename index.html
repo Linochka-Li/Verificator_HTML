@@ -204,66 +204,51 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
+    //  ВЕБОРАМА — НОВАЯ ВЕРСИЯ, СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
     // =============================================
     function transformWeborama(code) {
-        // Убираем экранные кавычки, НЕ трогаем переносы строк
-        code = code.replace(/""/g, '"');
+        // Разбиваем код на строки, чтобы сохранить форматирование
+        let lines = code.split('\n');
+        let resultLines = [];
 
-        // Меняем макросы, сохраняя всё остальное
-        code = code.replace(
-            /(clicktrackers\s*:\s*)\[\]/g,
-            '$1\'[[CLICK_TRACKING_BEACON]]\''
-        );
+        for (let line of lines) {
+            let newLine = line;
 
-        code = code.replace(
-            /(customparameter\s*:\s*)''/g,
-            '$1\'[[EVENT_ID]]\''
-        );
-        code = code.replace(
-            /(customparameter\s*:\s*)""/g,
-            '$1\'[[EVENT_ID]]\''
-        );
+            // Убираем экранные кавычки
+            newLine = newLine.replace(/""/g, '"');
 
-        code = code.replace(
-            /(erid\s*:\s*)'\[ERID\]'/g,
-            '$1\'[[CREATIVE_ORD_TOKEN]]\''
-        );
-        code = code.replace(
-            /(erid\s*:\s*)"\[ERID\]"/g,
-            '$1\'[[CREATIVE_ORD_TOKEN]]\''
-        );
+            // Заменяем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
+            newLine = newLine.replace(/(clicktrackers\s*:\s*)\[\]/g, '$1\'[[CLICK_TRACKING_BEACON]]\'');
 
-        code = code.replace(
-            /(random\s*:\s*)'\[RANDOM\]'/g,
-            '$1\'[[RANDOM]]\''
-        );
-        code = code.replace(
-            /(random\s*:\s*)"\[RANDOM\]"/g,
-            '$1\'[[RANDOM]]\''
-        );
+            // Заменяем customparameter : '' → customparameter : '[[EVENT_ID]]'
+            newLine = newLine.replace(/(customparameter\s*:\s*)''/g, '$1\'[[EVENT_ID]]\'');
+            newLine = newLine.replace(/(customparameter\s*:\s*)""/g, '$1\'[[EVENT_ID]]\'');
 
-        // В noscript
-        code = code.replace(
-            /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
-            function(match, hrefPrefix, quote1, url, quote2) {
-                if (match.includes('[[CLICK_PREFIX]]')) return match;
-                // Добавляем [[CLICK_PREFIX]] и заменяем [RANDOM] на [[RANDOM]]
-                url = url.replace(/\[RANDOM\]/g, '[[RANDOM]]');
-                return hrefPrefix + quote1 + '[[CLICK_PREFIX]]' + url + quote2;
+            // Заменяем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
+            newLine = newLine.replace(/(erid\s*:\s*)'\[ERID\]'/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
+            newLine = newLine.replace(/(erid\s*:\s*)"\[ERID\]"/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
+
+            // Заменяем random : '[RANDOM]' → random : '[[RANDOM]]'
+            newLine = newLine.replace(/(random\s*:\s*)'\[RANDOM\]'/g, '$1\'[[RANDOM]]\'');
+            newLine = newLine.replace(/(random\s*:\s*)"\[RANDOM\]"/g, '$1\'[[RANDOM]]\'');
+
+            // Заменяем [RANDOM] → [[RANDOM]] в ссылках
+            newLine = newLine.replace(/\[RANDOM\]/g, '[[RANDOM]]');
+
+            // Добавляем [[CLICK_PREFIX]] в href если нет
+            if (newLine.includes('href=') && newLine.includes('https://wcm.weborama-tech.ru')) {
+                if (!newLine.includes('[[CLICK_PREFIX]]')) {
+                    newLine = newLine.replace(
+                        /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
+                        '$1$2[[CLICK_PREFIX]]$3$4'
+                    );
+                }
             }
-        );
 
-        // В img src
-        code = code.replace(
-            /(src\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
-            function(match, srcPrefix, quote1, url, quote2) {
-                url = url.replace(/\[RANDOM\]/g, '[[RANDOM]]');
-                return srcPrefix + quote1 + url + quote2;
-            }
-        );
+            resultLines.push(newLine);
+        }
 
-        return code;
+        return resultLines.join('\n');
     }
 
     // =============================================
@@ -283,9 +268,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             case 'weborama': code = transformWeborama(code); break;
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
-
-        // ТОЛЬКО убираем экранные кавычки, НЕ ТРОГАЕМ переносы строк!
-        code = code.replace(/""/g, '"');
 
         output.textContent = code;
     }
