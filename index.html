@@ -209,22 +209,9 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — ФИНАЛЬНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  ВЕБОРАМА — ПРОСТОЕ И НАДЁЖНОЕ РЕШЕНИЕ
     // =============================================
     function transformWeborama(code) {
-        // 0. СНАЧАЛА убираем ЛЮБЫЕ лишние скобки в random
-        //    [[[RANDOM]]] → [[RANDOM]]
-        //    [[RANDOM]] → [[RANDOM]] (оставляем как есть)
-        code = code.replace(
-            /(random\s*:\s*)(['"]+)(\[+)(RANDOM)(\]{3,})(['"]+)/g,
-            '$1$2[[RANDOM]]$6'
-        );
-        // Если было 3 слева и 3 справа, но осталось 2+3 → доводим до ума
-        code = code.replace(
-            /(random\s*:\s*)(['"]+)\[\[\[RANDOM\]\]\](['"]+)/g,
-            '$1$2[[RANDOM]]$3'
-        );
-
         // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
@@ -251,18 +238,18 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
-        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]' (если ещё остался)
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
+        //    ПРОСТОЕ РЕШЕНИЕ: ищем ЛЮБЫЕ скобки вокруг RANDOM и заменяем на [[RANDOM]]
         code = code.replace(
-            /(random\s*:\s*)'\[RANDOM\]'/g,
-            '$1\'[[RANDOM]]\''
-        );
-        code = code.replace(
-            /(random\s*:\s*)"\[RANDOM\]"/g,
-            '$1\'[[RANDOM]]\''
+            /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
+            '$1$2[[RANDOM]]$5'
         );
 
-        // 5. В noscript заменяем [RANDOM] → [[RANDOM]] (везде, где есть)
-        code = code.replace(/\[RANDOM\]/g, '[[RANDOM]]');
+        // 5. В noscript заменяем ЛЮБЫЕ скобки вокруг RANDOM на [[RANDOM]]
+        code = code.replace(
+            /(\[*)RANDOM(\]*)/g,
+            '[[RANDOM]]'
+        );
 
         // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
         code = code.replace(
