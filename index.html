@@ -147,39 +147,56 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     //  ПРАВИЛА ДЛЯ АДСЕРВИНГА
     // =============================================
     function transformAdserving(code) {
-        // Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
-        code = code.replace(/\$\$erid\$\$/g, function() {
-            return '$$[[CREATIVE_ORD_TOKEN]]$$';
-        });
-        
-        // Добавляем ncu=$$[[CLICK_TRACKING_BEACON]]$$& в тег script
-        code = code.replace(
-            /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
-            function(match, prefix, params) {
-                if (params.includes('ncu=')) return match;
-                return prefix + 'ncu=$$[[CLICK_TRACKING_BEACON]]$$&' + params + '"';
-            }
-        );
+    // 1. Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
+    code = code.replace(/\$\$erid\$\$/g, function() {
+        return '$$[[CREATIVE_ORD_TOKEN]]$$';
+    });
 
-        // Добавляем vurl=$$[[APP_ID]]$$ во все ссылки
-        code = code.replace(
-            /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
-            function(match, prefix, params) {
-                if (params.includes('vurl=')) return match;
-                return prefix + params + '&vurl=$$[[APP_ID]]$$"';
-            }
-        );
+    // 2. Добавляем ncu=$$[[CLICK_TRACKING_BEACON]]$$& ТОЛЬКО в тег <script>
+    //    (НЕ в img src!)
+    code = code.replace(
+        /(<script[^>]*src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
+        function(match, prefix, params) {
+            if (params.includes('ncu=')) return match;
+            return prefix + 'ncu=$$[[CLICK_TRACKING_BEACON]]$$&' + params + '"';
+        }
+    );
 
-        // Оборачиваем ссылки в макрос [[CLICK_TRACKING_BEACON]]
-        code = code.replace(
-            /href="!!(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
-            function(match, url) {
-                return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
-            }
-        );
+    // 3. Добавляем vurl=$$[[APP_ID]]$$ во ВСЕ ссылки (и script, и img, и a)
+    //    Но ТОЛЬКО vurl=, без ncu= и без BEACON
+    code = code.replace(
+        /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
+        function(match, prefix, params) {
+            if (params.includes('vurl=')) return match;
+            return prefix + params + '&vurl=$$[[APP_ID]]$$"';
+        }
+    );
 
-        return code;
-    }
+    // 4. Добавляем vurl=$$[[APP_ID]]$$ в href (если ещё нет)
+    code = code.replace(
+        /(href=")(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
+        function(match, hrefPrefix, url) {
+            if (url.includes('vurl=')) return match;
+            return hrefPrefix + url + '&vurl=$$[[APP_ID]]$$"';
+        }
+    );
+
+    // 5. Оборачиваем ссылку в макрос [[CLICK_TRACKING_BEACON]] ТОЛЬКО для href
+    //    (НЕ для img src!)
+    code = code.replace(
+        /href="!!(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
+        function(match, url) {
+            return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
+        }
+    );
+
+    // 6. Страховка: если где-то остался $$erid$$
+    code = code.replace(/\$\$erid\$\$/g, function() {
+        return '$$[[CREATIVE_ORD_TOKEN]]$$';
+    });
+
+    return code;
+}
 
     // =============================================
     //  ПРАВИЛА ДЛЯ АДРИВЕРА
