@@ -141,10 +141,12 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     //  АДСЕРВИНГ
     // =============================================
     function transformAdserving(code) {
+        // 1. Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
 
+        // 2. Добавляем ncu=$$[[CLICK_TRACKING_BEACON]]$$& ТОЛЬКО в тег <script>
         code = code.replace(
             /(<script[^>]*src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -153,6 +155,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
+        // 3. Добавляем vurl=$$[[APP_ID]]$$ ТОЛЬКО в src (script и img)
         code = code.replace(
             /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -161,21 +164,18 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
+        // 4. Добавляем [[CLICK_TRACKING_BEACON]] в href (и убираем vurl если есть)
         code = code.replace(
             /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
             function(match, url) {
                 if (match.includes('[[CLICK_TRACKING_BEACON]]')) return match;
+                // Если в url есть &vurl=$$[[APP_ID]]$$ — убираем
+                url = url.replace(/&vurl=\$\$\[\[APP_ID\]\]\$\$/g, '');
                 return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
             }
         );
 
-        code = code.replace(
-            /(href="\[\[CLICK_TRACKING_BEACON\]\]https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)&vurl=\$\$\[\[APP_ID\]\]\$\$([^"]*")/g,
-            function(match, before, after) {
-                return before + after;
-            }
-        );
-
+        // 5. Страховка
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
