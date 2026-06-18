@@ -172,14 +172,17 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
         );
 
         // 4. Оборачиваем ссылку в макрос [[CLICK_TRACKING_BEACON]] ТОЛЬКО для href
+        //    Теперь ищем href="https://... (без !!)
         code = code.replace(
-            /href="!!(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
+            /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
             function(match, url) {
+                // Если уже есть [[CLICK_TRACKING_BEACON]] — пропускаем
+                if (match.includes('[[CLICK_TRACKING_BEACON]]')) return match;
                 return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
             }
         );
 
-        // 5. Страховка
+        // 5. Страховка: если где-то остался $$erid$$
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
