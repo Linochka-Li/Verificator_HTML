@@ -209,18 +209,14 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ (убирает лишние скобки)
+    //  ВЕБОРАМА — ФИНАЛЬНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformWeborama(code) {
         // 0. Убираем лишнюю скобку в random, если она есть
-        //    [[[RANDOM]]] → [[RANDOM]]
+        //    Ищем ЛЮБЫЕ варианты: '[[[RANDOM]]]', "[[[RANDOM]]]", ""[[[RANDOM]]]"", и т.д.
         code = code.replace(
-            /(random\s*:\s*)'\[\[\[RANDOM\]\]\]'/g,
-            '$1\'[[RANDOM]]\''
-        );
-        code = code.replace(
-            /(random\s*:\s*)"\[\[\[RANDOM\]\]\]"/g,
-            '$1\'[[RANDOM]]\''
+            /(random\s*:\s*)(['"]+)\[\[\[RANDOM\]\]\](['"]+)/g,
+            '$1$2[[RANDOM]]$3'
         );
 
         // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
@@ -249,7 +245,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
-        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]' (если ещё остался)
         code = code.replace(
             /(random\s*:\s*)'\[RANDOM\]'/g,
             '$1\'[[RANDOM]]\''
