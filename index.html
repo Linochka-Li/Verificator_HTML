@@ -212,8 +212,14 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     //  ВЕБОРАМА — ФИНАЛЬНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformWeborama(code) {
-        // 0. Убираем лишнюю скобку в random, если она есть
-        //    Ищем ЛЮБЫЕ варианты: '[[[RANDOM]]]', "[[[RANDOM]]]", ""[[[RANDOM]]]"", и т.д.
+        // 0. СНАЧАЛА убираем ЛЮБЫЕ лишние скобки в random
+        //    [[[RANDOM]]] → [[RANDOM]]
+        //    [[RANDOM]] → [[RANDOM]] (оставляем как есть)
+        code = code.replace(
+            /(random\s*:\s*)(['"]+)(\[+)(RANDOM)(\]{3,})(['"]+)/g,
+            '$1$2[[RANDOM]]$6'
+        );
+        // Если было 3 слева и 3 справа, но осталось 2+3 → доводим до ума
         code = code.replace(
             /(random\s*:\s*)(['"]+)\[\[\[RANDOM\]\]\](['"]+)/g,
             '$1$2[[RANDOM]]$3'
