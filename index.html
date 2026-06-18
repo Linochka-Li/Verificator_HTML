@@ -3,35 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔧 Верификатор креативов</title>
+    <title>Adspector HTML</title>
     <style>
-        * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-        body { background: #f0f4f8; padding: 30px; display: flex; justify-content: center; }
-        .container { max-width: 1100px; width: 100%; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #1e293b; }
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: #f3f0ff; padding: 30px; display: flex; justify-content: center; }
+        .container { max-width: 1100px; width: 100%; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 40px rgba(120, 80, 200, 0.15); border: 1px solid #e8e0f5; }
+        h1 { margin-top: 0; color: #4a1a8a; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        h1 span { background: #7c3aed; color: white; font-size: 14px; padding: 4px 14px; border-radius: 40px; font-weight: 500; }
         .row { display: flex; gap: 20px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 300px; }
-        label { font-weight: 600; font-size: 14px; color: #334155; display: block; margin: 16px 0 6px; }
-        select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-family: 'Courier New', monospace; background: #f8fafc; }
+        label { font-weight: 600; font-size: 14px; color: #4a1a8a; display: block; margin: 16px 0 6px; }
+        select, textarea { width: 100%; padding: 12px; border: 2px solid #d8caf5; border-radius: 12px; font-size: 14px; font-family: 'Courier New', monospace; background: #faf8ff; transition: 0.2s; }
+        select:focus, textarea:focus { outline: none; border-color: #7c3aed; background: white; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1); }
         textarea { height: 280px; resize: vertical; }
-        .output { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 500px; overflow-y: auto; }
-        .btn { background: #3b82f6; color: white; border: none; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%; }
-        .btn:hover { background: #2563eb; }
-        .btn-copy { background: #10b981; margin-top: 10px; }
-        .btn-copy:hover { background: #059669; }
-        .badge { background: #dbeafe; color: #1e40af; border-radius: 40px; padding: 4px 14px; font-size: 13px; }
-        .info-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; color: #78350f; }
-        .footer { margin-top: 24px; color: #64748b; font-size: 14px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+        .output { background: #f8f5ff; border: 2px solid #d8caf5; border-radius: 12px; padding: 16px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 500px; overflow-y: auto; }
+        .btn { background: #7c3aed; color: white; border: none; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%; transition: 0.2s; }
+        .btn:hover { background: #5b21b6; transform: scale(1.01); box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3); }
+        .btn-copy { background: #6d28d9; margin-top: 10px; }
+        .btn-copy:hover { background: #4c1d95; }
+        .info-box { background: #ede9fe; border-left: 4px solid #7c3aed; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; color: #3b1a6e; }
+        .footer { margin-top: 24px; color: #7c6a9e; font-size: 14px; border-top: 1px solid #e8e0f5; padding-top: 20px; text-align: center; }
         .macro-list { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
-        .macro-tag { background: #e0e7ff; color: #3730a3; padding: 4px 12px; border-radius: 20px; font-family: 'Courier New', monospace; font-size: 13px; }
-        .preset-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-        .preset-btn { background: #e2e8f0; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer; }
-        .preset-btn:hover { background: #cbd5e1; }
+        .macro-tag { background: #ddd6fe; color: #4a1a8a; padding: 4px 14px; border-radius: 20px; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500; }
+        .badge { background: #7c3aed; color: white; border-radius: 40px; padding: 4px 14px; font-size: 13px; font-weight: 500; margin-left: 8px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📦 Верификатор креативов</h1>
+    <h1>🔮 Adspector HTML <span>verificator</span></h1>
     <div class="info-box" id="infoBox">⚡ Выбери верификатора</div>
     <div class="row">
         <div class="col">
@@ -41,72 +40,24 @@
                 <option value="adriver">Адривер</option>
                 <option value="weborama">Веборама</option>
             </select>
-            <label>📋 Быстрая вставка</label>
-            <div class="preset-buttons">
-                <button class="preset-btn" onclick="loadPreset('adserving')">Адсервинг</button>
-                <button class="preset-btn" onclick="loadPreset('adriver')">Адривер</button>
-                <button class="preset-btn" onclick="loadPreset('weborama')">Веборама</button>
-            </div>
-            <label for="inputCode">📄 Исходный код</label>
-            <textarea id="inputCode" placeholder="Вставь код..."></textarea>
+
+            <label for="inputCode">📄 Исходный код креатива</label>
+            <textarea id="inputCode" placeholder="Вставь HTML-код с макросами..."></textarea>
+
             <button class="btn" onclick="transform()">⚡ Преобразовать</button>
         </div>
         <div class="col">
-            <label>✅ Результат</label>
+            <label>✅ Готовый код с макросами</label>
             <div id="output" class="output">Нажми «Преобразовать»</div>
-            <button class="btn btn-copy" onclick="copyOutput()">📋 Скопировать</button>
+            <button class="btn btn-copy" onclick="copyOutput()">📋 Скопировать результат</button>
         </div>
     </div>
-    <div class="footer">🔧 Вставь код → выбери верификатора → получи результат</div>
+    <div class="footer">🔧 Вставь код → выбери верификатора → получи готовый результат</div>
 </div>
 <script>
-    const PRESETS = {
-        adserving: `<script src="https://bs.serving-sys.ru/Serving/adServer.bs?c=28&cn=display&pli=1090409665&w=160&h=600&ord=[timestamp]&z=10000&pcp=$$[[APP_ID]]$$&LineID=$$erid$$"><\/script>
-<noscript>
-<a href="!!https://bs.serving-sys.ru/Serving/adServer.bs?cn=brd&pli=1090409665&Page=&Pos=-1221349322&LineID=$$erid$$&ord=[timestamp]" target="_blank">
-<img src="https://bs.serving-sys.ru/Serving/adServer.bs?c=8&cn=display&pli=1090409665&Page=&Pos=-1221349322&pcp=$$[[APP_ID]]$$&ord=[timestamp]" border=0 width=160 height=600><\/a>
-<\/noscript>`,
-        adriver: `<!-- AdRiver code START -->
-<script>
-window.adrivermraiddata = window.adrivermraiddata || {};
-window.adrivermraiddata.trackers = {};
-(function(SRC) {
-    var script = document.createElement('script');
-    script.setAttribute('type', 'text/javascript');
-    script.src = SRC.split('[[RANDOM]]').join(~~(1E6 * Math.random()));
-    document.querySelector('head').appendChild(script);
-})('https://ad.adriver.ru/cgi-bin/merle.cgi?sid=1&bt=11&tuid=1&ad=111111&pid=0000000&bid=0000000&bn=0000000&exss=&rnd=[[RANDOM]]');
-<\/script>
-<!-- AdRiver code END -->`,
-        weborama: `<script type="text/javascript">
-var adperfobj = {
-account_id : 9633
-,tracking_element_id : 794
-,width : 300
-,height : 250
-,fullhost : 'wcm.weborama-tech.ru'
-,random : '[RANDOM]'
-,burst : 'auto'
-,imptrackers : []
-,clicktrackers : []
-,customparameter : ''
-,publisherclick : '[PUBLISHER_TRACKING_URL]'
-,erid : '[ERID]'
-,er : 1
-};
-document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.weborama-tech.ru/public/js/advertiserv2/ru/adperf_launch_1.0.0_scrambled.js"><\/scr'+'ipt>');
-<\/script>
-<noscript>
-<a href="https://wcm.weborama-tech.ru/fcgi-bin/dispatch.fcgi?a.A=cl&a.si=9633&a.te=794&a.bk=1&g.ism=0&a.ra=[RANDOM]&g.lu=" target="_blank">
-<img src="https://wcm.weborama-tech.ru/fcgi-bin/dispatch.fcgi?a.A=im&a.si=9633&a.te=794&a.he=250&a.wi=300&a.hr=R&a.bk=1&g.ism=0&a.ra=[RANDOM]" width="300" height="250" style="border:0px"/>
-<\/a>
-<\/noscript>`
-    };
-
-    function loadPreset(key) {
-        document.getElementById('inputCode').value = PRESETS[key];
-        transform();
-    }
+    // =============================================
+    //  ПРЕСЕТЫ УДАЛЕНЫ
+    // =============================================
 
     const INFO = {
         adserving: {
@@ -203,7 +154,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  ВЕБОРАМА
     // =============================================
     function transformWeborama(code) {
         // 0. Убираем ЛИШНИЕ кавычки: "" → "
@@ -321,7 +272,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
 
     window.onload = function() {
         updateInfo();
-        loadPreset('adserving');
     };
 </script>
 </body>
