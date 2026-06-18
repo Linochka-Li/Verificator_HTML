@@ -3,36 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adspector HTML</title>
+    <title>🔧 Верификатор креативов</title>
     <style>
         * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-        body { background: #f3f0ff; padding: 30px; display: flex; justify-content: center; }
-        .container { max-width: 1100px; width: 100%; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 40px rgba(120, 80, 200, 0.15); border: 1px solid #e8e0f5; }
-        h1 { margin-top: 0; color: #4a1a8a; font-weight: 700; }
+        body { background: #f0f4f8; padding: 30px; display: flex; justify-content: center; }
+        .container { max-width: 1100px; width: 100%; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #1e293b; }
         .row { display: flex; gap: 20px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 300px; }
-        label { font-weight: 600; font-size: 14px; color: #4a1a8a; display: block; margin: 16px 0 6px; }
-        select, textarea { width: 100%; padding: 12px; border: 2px solid #d8caf5; border-radius: 12px; font-size: 14px; font-family: 'Courier New', monospace; background: #faf8ff; transition: 0.2s; }
-        select:focus, textarea:focus { outline: none; border-color: #7c3aed; background: white; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1); }
+        label { font-weight: 600; font-size: 14px; color: #334155; display: block; margin: 16px 0 6px; }
+        select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-family: 'Courier New', monospace; background: #f8fafc; }
         textarea { height: 280px; resize: vertical; }
-        .output { background: #f8f5ff; border: 2px solid #d8caf5; border-radius: 12px; padding: 16px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 500px; overflow-y: auto; }
-        .btn { background: #7c3aed; color: white; border: none; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%; transition: 0.2s; }
-        .btn:hover { background: #5b21b6; transform: scale(1.01); box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3); }
-        .btn-copy { background: #6d28d9; margin-top: 10px; }
-        .btn-copy:hover { background: #4c1d95; }
-        .badge { background: #7c3aed; color: white; border-radius: 40px; padding: 4px 14px; font-size: 13px; font-weight: 500; }
-        .info-box { background: #ede9fe; border-left: 4px solid #7c3aed; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; color: #3b1a6e; }
-        .footer { margin-top: 24px; color: #7c6a9e; font-size: 14px; border-top: 1px solid #e8e0f5; padding-top: 20px; text-align: center; }
+        .output { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 500px; overflow-y: auto; }
+        .btn { background: #3b82f6; color: white; border: none; padding: 14px 28px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%; }
+        .btn:hover { background: #2563eb; }
+        .btn-copy { background: #10b981; margin-top: 10px; }
+        .btn-copy:hover { background: #059669; }
+        .badge { background: #dbeafe; color: #1e40af; border-radius: 40px; padding: 4px 14px; font-size: 13px; }
+        .info-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; color: #78350f; }
+        .footer { margin-top: 24px; color: #64748b; font-size: 14px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
         .macro-list { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
-        .macro-tag { background: #ddd6fe; color: #4a1a8a; padding: 4px 14px; border-radius: 20px; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500; }
+        .macro-tag { background: #e0e7ff; color: #3730a3; padding: 4px 12px; border-radius: 20px; font-family: 'Courier New', monospace; font-size: 13px; }
         .preset-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-        .preset-btn { background: #ede9fe; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #4a1a8a; cursor: pointer; transition: 0.2s; }
-        .preset-btn:hover { background: #ddd6fe; transform: scale(1.05); }
+        .preset-btn { background: #e2e8f0; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer; }
+        .preset-btn:hover { background: #cbd5e1; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🔮 Adspector HTML</h1>
+    <h1>📦 Верификатор креативов</h1>
     <div class="info-box" id="infoBox">⚡ Выбери верификатора</div>
     <div class="row">
         <div class="col">
@@ -204,51 +203,76 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — СОХРАНЯЕТ ФОРМАТИРОВАНИЕ!
+    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformWeborama(code) {
-        // Разбиваем код на строки, чтобы сохранить форматирование
-        let lines = code.split('\n');
-        let resultLines = [];
+        // 0. Убираем ЛИШНИЕ кавычки: "" → "
+        code = code.replace(/""/g, '"');
 
-        for (let line of lines) {
-            let newLine = line;
+        // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
+        code = code.replace(
+            /(clicktrackers\s*:\s*)\[\]/g,
+            '$1\'[[CLICK_TRACKING_BEACON]]\''
+        );
 
-            // Убираем экранные кавычки
-            newLine = newLine.replace(/""/g, '"');
+        // 2. Меняем customparameter : '' → customparameter : '[[EVENT_ID]]'
+        code = code.replace(
+            /(customparameter\s*:\s*)''/g,
+            '$1\'[[EVENT_ID]]\''
+        );
+        code = code.replace(
+            /(customparameter\s*:\s*)""/g,
+            '$1\'[[EVENT_ID]]\''
+        );
 
-            // Заменяем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
-            newLine = newLine.replace(/(clicktrackers\s*:\s*)\[\]/g, '$1\'[[CLICK_TRACKING_BEACON]]\'');
+        // 3. Меняем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
+        code = code.replace(
+            /(erid\s*:\s*)'\[ERID\]'/g,
+            '$1\'[[CREATIVE_ORD_TOKEN]]\''
+        );
+        code = code.replace(
+            /(erid\s*:\s*)"\[ERID\]"/g,
+            '$1\'[[CREATIVE_ORD_TOKEN]]\''
+        );
 
-            // Заменяем customparameter : '' → customparameter : '[[EVENT_ID]]'
-            newLine = newLine.replace(/(customparameter\s*:\s*)''/g, '$1\'[[EVENT_ID]]\'');
-            newLine = newLine.replace(/(customparameter\s*:\s*)""/g, '$1\'[[EVENT_ID]]\'');
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
+        code = code.replace(
+            /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
+            '$1$2[[RANDOM]]$5'
+        );
 
-            // Заменяем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
-            newLine = newLine.replace(/(erid\s*:\s*)'\[ERID\]'/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
-            newLine = newLine.replace(/(erid\s*:\s*)"\[ERID\]"/g, '$1\'[[CREATIVE_ORD_TOKEN]]\'');
+        // 5. В noscript заменяем ЛЮБЫЕ скобки вокруг RANDOM
+        code = code.replace(
+            /(\[*)RANDOM(\]*)/g,
+            '[[RANDOM]]'
+        );
 
-            // Заменяем random : '[RANDOM]' → random : '[[RANDOM]]'
-            newLine = newLine.replace(/(random\s*:\s*)'\[RANDOM\]'/g, '$1\'[[RANDOM]]\'');
-            newLine = newLine.replace(/(random\s*:\s*)"\[RANDOM\]"/g, '$1\'[[RANDOM]]\'');
-
-            // Заменяем [RANDOM] → [[RANDOM]] в ссылках
-            newLine = newLine.replace(/\[RANDOM\]/g, '[[RANDOM]]');
-
-            // Добавляем [[CLICK_PREFIX]] в href если нет
-            if (newLine.includes('href=') && newLine.includes('https://wcm.weborama-tech.ru')) {
-                if (!newLine.includes('[[CLICK_PREFIX]]')) {
-                    newLine = newLine.replace(
-                        /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
-                        '$1$2[[CLICK_PREFIX]]$3$4'
-                    );
-                }
+        // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
+        code = code.replace(
+            /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
+            function(match, hrefPrefix, quote1, url, quote2) {
+                if (match.includes('[[CLICK_PREFIX]]')) return match;
+                return hrefPrefix + quote1 + '[[CLICK_PREFIX]]' + url + quote2;
             }
+        );
 
-            resultLines.push(newLine);
-        }
+        // 7. Страховка: если href без кавычек
+        code = code.replace(
+            /(href=)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^>\s]*)/g,
+            function(match, hrefPrefix, url) {
+                if (match.includes('[[CLICK_PREFIX]]')) return match;
+                return hrefPrefix + '"[[CLICK_PREFIX]]' + url + '"';
+            }
+        );
 
-        return resultLines.join('\n');
+        // 8. ФИНАЛЬНАЯ СТРАХОВКА: исправляем ЛЮБЫЕ неправильные скобки
+        code = code.replace(/\[{1,3}RANDOM\]{1,3}/g, '[[RANDOM]]');
+        code = code.replace(/\[{1,2}CLICK_TRACKING_BEACON\]{1,2}/g, '[[CLICK_TRACKING_BEACON]]');
+        code = code.replace(/\[{1,2}EVENT_ID\]{1,2}/g, '[[EVENT_ID]]');
+        code = code.replace(/\[{1,2}CREATIVE_ORD_TOKEN\]{1,2}/g, '[[CREATIVE_ORD_TOKEN]]');
+        code = code.replace(/\[{1,2}CLICK_PREFIX\]{1,2}/g, '[[CLICK_PREFIX]]');
+
+        return code;
     }
 
     // =============================================
@@ -269,7 +293,10 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
-        // НИЧЕГО НЕ УБИРАЕМ! Просто выводим результат
+        // ФИНАЛЬНАЯ ОЧИСТКА: убираем все "" и лишние пробелы
+        code = code.replace(/""/g, '"');
+        code = code.replace(/\s+/g, ' ').trim();
+
         output.textContent = code;
     }
 
