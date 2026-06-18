@@ -293,6 +293,10 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             default: output.textContent = '❌ Верификатор не найден'; return;
         }
 
+        // ФИНАЛЬНАЯ ОЧИСТКА: убираем все "" и лишние пробелы
+        code = code.replace(/""/g, '"');
+        code = code.replace(/\s+/g, ' ').trim();
+
         output.textContent = code;
     }
 
