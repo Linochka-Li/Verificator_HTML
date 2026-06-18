@@ -138,7 +138,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  АДСЕРВИНГ — ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  АДСЕРВИНГ
     // =============================================
     function transformAdserving(code) {
         code = code.replace(/\$\$erid\$\$/g, function() {
@@ -209,9 +209,20 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ (убирает лишние скобки)
     // =============================================
     function transformWeborama(code) {
+        // 0. Убираем лишнюю скобку в random, если она есть
+        //    [[[RANDOM]]] → [[RANDOM]]
+        code = code.replace(
+            /(random\s*:\s*)'\[\[\[RANDOM\]\]\]'/g,
+            '$1\'[[RANDOM]]\''
+        );
+        code = code.replace(
+            /(random\s*:\s*)"\[\[\[RANDOM\]\]\]"/g,
+            '$1\'[[RANDOM]]\''
+        );
+
         // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
@@ -239,7 +250,6 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
         );
 
         // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
-        //    Ищем только [RANDOM] (одни скобки)
         code = code.replace(
             /(random\s*:\s*)'\[RANDOM\]'/g,
             '$1\'[[RANDOM]]\''
