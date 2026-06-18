@@ -138,7 +138,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  АДСЕРВИНГ — ИСПРАВЛЕННАЯ ВЕРСИЯ
+    //  АДСЕРВИНГ — ОКОНЧАТЕЛЬНО ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformAdserving(code) {
         // 1. Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
@@ -156,7 +156,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
         );
 
         // 3. Добавляем vurl=$$[[APP_ID]]$$ ТОЛЬКО в src (script и img)
-        //    НЕ добавляем в href!
+        //    НЕ ДОБАВЛЯЕМ в href!
         code = code.replace(
             /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -165,8 +165,8 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 4. Оборачиваем ссылку в макрос [[CLICK_TRACKING_BEACON]] ТОЛЬКО для href
-        //    Ищем href="https://... (без !!, без BEACON)
+        // 4. Добавляем [[CLICK_TRACKING_BEACON]] в href
+        //    Находим href="https://... и добавляем BEACON
         code = code.replace(
             /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
             function(match, url) {
@@ -176,7 +176,15 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 5. Страховка: если где-то остался $$erid$$
+        // 5. Убираем &vurl=$$[[APP_ID]]$$ из href (если вдруг добавилось)
+        code = code.replace(
+            /(href="\[\[CLICK_TRACKING_BEACON\]\]https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)&vurl=\$\$\[\[APP_ID\]\]\$\$([^"]*")/g,
+            function(match, before, after) {
+                return before + after;
+            }
+        );
+
+        // 6. Страховка: если где-то остался $$erid$$
         code = code.replace(/\$\$erid\$\$/g, function() {
             return '$$[[CREATIVE_ORD_TOKEN]]$$';
         });
