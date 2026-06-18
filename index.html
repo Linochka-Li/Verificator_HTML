@@ -203,19 +203,19 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     }
 
     // =============================================
-    //  ВЕБОРАМА — С ИСПРАВЛЕНИЕМ КАВЫЧЕК
+    //  ВЕБОРАМА — ИСПРАВЛЕННАЯ ВЕРСИЯ
     // =============================================
     function transformWeborama(code) {
         // 0. Убираем ЛИШНИЕ кавычки: "" → "
         code = code.replace(/""/g, '"');
 
-        // 1. Меняем clicktrackers
+        // 1. Меняем clicktrackers : [] → clicktrackers : '[[CLICK_TRACKING_BEACON]]'
         code = code.replace(
             /(clicktrackers\s*:\s*)\[\]/g,
             '$1\'[[CLICK_TRACKING_BEACON]]\''
         );
 
-        // 2. Меняем customparameter
+        // 2. Меняем customparameter : '' → customparameter : '[[EVENT_ID]]'
         code = code.replace(
             /(customparameter\s*:\s*)''/g,
             '$1\'[[EVENT_ID]]\''
@@ -225,7 +225,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[EVENT_ID]]\''
         );
 
-        // 3. Меняем erid
+        // 3. Меняем erid : '[ERID]' → erid : '[[CREATIVE_ORD_TOKEN]]'
         code = code.replace(
             /(erid\s*:\s*)'\[ERID\]'/g,
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
@@ -235,7 +235,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '$1\'[[CREATIVE_ORD_TOKEN]]\''
         );
 
-        // 4. Меняем random (ЛЮБЫЕ скобки → ровно две)
+        // 4. Меняем random : '[RANDOM]' → random : '[[RANDOM]]'
         code = code.replace(
             /(random\s*:\s*)(['"]+)(\[*)RANDOM(\]*)(['"]+)/g,
             '$1$2[[RANDOM]]$5'
@@ -247,7 +247,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             '[[RANDOM]]'
         );
 
-        // 6. Добавляем [[CLICK_PREFIX]] в href
+        // 6. Добавляем [[CLICK_PREFIX]] в href перед URL
         code = code.replace(
             /(href\s*=\s*)(["']+)(https:\/\/wcm\.weborama-tech\.ru\/fcgi-bin\/dispatch\.fcgi\?[^"']*)(["']+)/g,
             function(match, hrefPrefix, quote1, url, quote2) {
