@@ -111,7 +111,7 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     const INFO = {
         adserving: {
             label: 'Адсервинг',
-            macros: ['ncu=$$[[CLICK_TRACKING_BEACON]]$$& (только в script)', '[[CLICK_TRACKING_BEACON]] (только в href)', '$$[[CREATIVE_ORD_TOKEN]]$$', 'vurl=$$[[APP_ID]]$$'],
+            macros: ['ncu=$$[[CLICK_TRACKING_BEACON]]$$& (только в script)', '[[CLICK_TRACKING_BEACON]] (только в href)', '$$[[CREATIVE_ORD_TOKEN]]$$', 'vurl=$$[[APP_ID]]$$ (только в src)'],
             description: 'Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$, добавляем ncu= и vurl='
         },
         adriver: {
@@ -155,7 +155,8 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
             }
         );
 
-        // 3. Добавляем vurl=$$[[APP_ID]]$$ во ВСЕ ссылки (src и href)
+        // 3. Добавляем vurl=$$[[APP_ID]]$$ ТОЛЬКО в src (script и img)
+        //    НЕ добавляем в href!
         code = code.replace(
             /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
             function(match, prefix, params) {
@@ -163,16 +164,9 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
                 return prefix + params + '&vurl=$$[[APP_ID]]$$"';
             }
         );
-        code = code.replace(
-            /(href=")(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
-            function(match, hrefPrefix, url) {
-                if (url.includes('vurl=')) return match;
-                return hrefPrefix + url + '&vurl=$$[[APP_ID]]$$"';
-            }
-        );
 
         // 4. Оборачиваем ссылку в макрос [[CLICK_TRACKING_BEACON]] ТОЛЬКО для href
-        //    Теперь ищем href="https://... (без !!)
+        //    Ищем href="https://... (без !!, без BEACON)
         code = code.replace(
             /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
             function(match, url) {
