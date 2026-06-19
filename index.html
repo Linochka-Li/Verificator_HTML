@@ -142,42 +142,48 @@ document.write('<scr'+'ipt language="javascript" src="https://cstatic-ru-cv.webo
     //  АДСЕРВИНГ
     // =============================================
     function transformAdserving(code) {
-        code = code.replace(/\$\$erid\$\$/g, function() {
-            return '$$[[CREATIVE_ORD_TOKEN]]$$';
-        });
+    // 1. Заменяем $$erid$$ → $$[[CREATIVE_ORD_TOKEN]]$$
+    code = code.replace(/\$\$erid\$\$/g, function() {
+        return '$$[[CREATIVE_ORD_TOKEN]]$$';
+    });
 
-        code = code.replace(
-            /(<script[^>]*src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
-            function(match, prefix, params) {
-                if (params.includes('ncu=')) return match;
-                return prefix + 'ncu=$$[[CLICK_TRACKING_BEACON]]$$&' + params + '"';
-            }
-        );
+    // 2. Добавляем ncu=$$[[CLICK_TRACKING_BEACON]]$$& ТОЛЬКО в тег <script>
+    code = code.replace(
+        /(<script[^>]*src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
+        function(match, prefix, params) {
+            if (params.includes('ncu=')) return match;
+            return prefix + 'ncu=$$[[CLICK_TRACKING_BEACON]]$$&' + params + '"';
+        }
+    );
 
-        code = code.replace(
-            /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
-            function(match, prefix, params) {
-                if (params.includes('vurl=')) return match;
-                return prefix + params + '&vurl=$$[[APP_ID]]$$"';
-            }
-        );
+    // 3. Добавляем vurl=$$[[APP_ID]]$$ ТОЛЬКО в src (script и img)
+    code = code.replace(
+        /(src="https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?)([^"]*)"/g,
+        function(match, prefix, params) {
+            if (params.includes('vurl=')) return match;
+            return prefix + params + '&vurl=$$[[APP_ID]]$$"';
+        }
+    );
 
-        code = code.replace(
-            /href="(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
-            function(match, url) {
-                if (match.includes('[[CLICK_TRACKING_BEACON]]')) return match;
-                url = url.replace(/&vurl=\$\$\[\[APP_ID\]\]\$\$/g, '');
-                return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
-            }
-        );
+    // 4. В href: заменяем !! на [[CLICK_TRACKING_BEACON]] и убираем vurl
+    code = code.replace(
+        /href="!!(https:\/\/bs\.serving-sys\.ru\/Serving\/adServer\.bs\?[^"]*)"/g,
+        function(match, url) {
+            // Если уже есть [[CLICK_TRACKING_BEACON]] — пропускаем
+            if (match.includes('[[CLICK_TRACKING_BEACON]]')) return match;
+            // Убираем &vurl=$$[[APP_ID]]$$ если есть
+            url = url.replace(/&vurl=\$\$\[\[APP_ID\]\]\$\$/g, '');
+            return 'href="[[CLICK_TRACKING_BEACON]]' + url + '"';
+        }
+    );
 
-        code = code.replace(/\$\$erid\$\$/g, function() {
-            return '$$[[CREATIVE_ORD_TOKEN]]$$';
-        });
+    // 5. Страховка: если где-то остался $$erid$$
+    code = code.replace(/\$\$erid\$\$/g, function() {
+        return '$$[[CREATIVE_ORD_TOKEN]]$$';
+    });
 
-        return code;
-    }
-
+    return code;
+}
     // =============================================
     //  АДРИВЕР
     // =============================================
